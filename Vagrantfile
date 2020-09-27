@@ -1,5 +1,15 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+class Hash
+  def slice(*keep_keys)
+    h = {}
+    keep_keys.each { |key| h[key] = fetch(key) if has_key?(key) }
+    h
+  end unless Hash.method_defined?(:slice)
+  def except(*less_keys)
+    slice(*keys - less_keys)
+  end unless Hash.method_defined?(:except)
+end
 
 Vagrant.configure("2") do |config|
 
@@ -31,8 +41,36 @@ aws.ami = "ami-07a985bed28dfbc01"
 override.ssh.username = "ubuntu"
 end
 
- config.vm.provision "shell", inline: <<-SHELL
-   apt-get update
-   apt-get install -y apache2
- SHELL
+   config.vm.define "webserver" do |webserver|
+    webserver.vm.hostname = "webserver"
+  
+    webserver.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+      apt-get install -y apache2 php libapache2-mod-php php-mysql
+      cp /vagrant/webserver-website.conf /etc/apache2/sites-available/
+      chmod 777 /vagrant
+      chmod 777 /vagrant/www
+      chmod 777 /vagrant/www/index.php
+      a2ensite webserver-website
+      a2dissite 000-default
+      service apache2 reload
+    SHELL
+  end
+
+  config.vm.define "conserver" do |conserver|
+    conserver.vm.hostname = "conserver"
+
+    conserver.vm.provision "shell", inline: <<-SHELL
+      apt-get update
+       apt-get install -y apache2 php libapache2-mod-php php-mysql
+      cp /vagrant/conserver-website.conf /etc/apache2/sites-available/
+      chmod 777 /vagrant
+      chmod 777 /vagrant/www
+      chmod 777 /vagrant/www/convert
+      chmod 777 /vagrant/www/convert/convert.php
+      a2ensite conserver-website
+      a2dissite 000-default
+      service apache2 reload
+    SHELL
+  end
 end
