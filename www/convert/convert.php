@@ -6,9 +6,9 @@
 
  <?php
 
-$pdo_dsn = "mysql:host=$db_host;dbname=$db_name";
+//$pdo_dsn = "mysql:host=$db_host;dbname=$db_name";
 
-$pdo = new PDO($pdo_dsn, $db_user, $db_passwd);
+//$pdo = new PDO($pdo_dsn, $db_user, $db_passwd);
 
 if(isset($_POST['Convert'])) {
 $zone = $_POST["timezone"];
@@ -414,7 +414,7 @@ break;
 
 ?>
 
-<form method="post" action="http://ec2-3-92-144-105.compute-1.amazonaws.com/index.php">
+<form method="post" action="http://ec2-100-26-134-17.compute-1.amazonaws.com/index.php">
 <button name = "Back"type= "submit">Back</button>
 </form>
 
